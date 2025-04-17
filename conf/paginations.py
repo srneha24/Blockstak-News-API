@@ -3,6 +3,8 @@ from typing import Union, Dict
 
 
 class Pagination:
+    """Paagination class for handling pagination logic."""
+    
     def __init__(self, page, limit, total_count, data):
         self._total_pages = ceil(total_count/limit)
         self._page = page

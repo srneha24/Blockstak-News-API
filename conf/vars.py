@@ -14,6 +14,10 @@ DB_NAME = os.getenv("DB_NAME")
 DB_USERNAME = os.getenv("DB_USERNAME")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 
+# CLIENT INFO
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+
 # MISC
 JWT_SECRET = os.getenv("JWT_SECRET")
 LOGGER_TO_USE = os.getenv("LOGGER_TO_USE", "local")
