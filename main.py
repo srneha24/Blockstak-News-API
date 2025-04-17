@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Path, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
 from fastapi.exceptions import RequestValidationError
@@ -71,3 +71,37 @@ register_tortoise(
     generate_schemas=True,
     add_exception_handlers=True,
 )
+
+
+@app.get("/news")
+async def get_news(
+    request: Request, page: int = Query(1, ge=1), limit: int = Query(10, ge=1)
+):
+    """Get news headlines with pagination."""
+    pass
+
+
+@app.post("/news/save-latest")
+async def save_latest_news(request: Request):
+    """Save the top three latest news headlines."""
+    pass
+
+
+@app.get("/news/headlines/country/{country_code}")
+async def get_headlines_by_country(request: Request, country_code: str = Path(...)):
+    """Get news headlines by country code."""
+    pass
+
+
+@app.get("/news/headlines/source/{source_id}")
+async def get_headlines_by_source(request: Request, source_id: str = Path(...)):
+    """Get news headlines by source ID."""
+    pass
+
+
+@app.get("/news/headlines/filter")
+async def get_headlines_by_filter(
+    request: Request, country: str = Query(None), source: str = Query(None)
+):
+    """Get news headlines by country or source."""
+    pass
