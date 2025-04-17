@@ -18,6 +18,6 @@ async def get_headlines_by_source_view(source_id: str):
     pass
 
 
-async def get_headlines_by_filter(country_code: str = None, source_id: str = None):
+async def get_headlines_by_filter_view(country_code: str = None, source_id: str = None):
     """View to get news headlines by country or source."""
     pass
