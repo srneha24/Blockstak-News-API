@@ -20,7 +20,21 @@
 
 ## Project description
 
+This project uses the following technologies
+
+- **Backend Framework:** FastAPI
+- **Database:** Postgres
+- **ORM:** Tortoise ORM
+- **Database Migration Tool:** Aerich
+- **Linter:** Pylint
+- **Unit Test Framework:** Pytest
+- **Containerization:** Docker
+- **API Documentation:** Apidog
+
 ### Codebase improvements
+
+1. Instead of hard coding the client ID and client secret, a client registration module can be added to handle multiple clients.
+2. A docker compose file can be used to manage the container creation instead of running the Dockerfile directly.
 
 ## Setup instructions
 
