@@ -38,8 +38,8 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                     raise HTTPException(status_code=401, detail="Invalid Token", headers={"WWW-Authenticate": "Bearer"})
                 request.state.is_authenticated = True
             except InvalidTokenError as error:
-                Log.warning(data={'headers': request.state.headers, 'error': f'{error}'},
-                            message=f'Invalid Token | {request.url.path} ')
+                Log.warning(data={'error': f'{error}'},
+                            message=f'Invalid Token | Path: {request.url.path} ')
 
         response = await call_next(request)
         return response

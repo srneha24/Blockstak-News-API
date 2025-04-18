@@ -14,3 +14,14 @@ class Article(Model):
     class Meta:
         table = "article"
         default_connection = "default"
+    
+    def to_json(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "author": self.author,
+            "description": self.description,
+            "published_at": self.published_at.isoformat() if self.published_at else None,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }
