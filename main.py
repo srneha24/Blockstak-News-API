@@ -1,5 +1,6 @@
-import os
-from contextlib import asynccontextmanager
+import hashlib
+import random
+import string
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse
@@ -7,8 +8,8 @@ from fastapi.exceptions import RequestValidationError
 from starlette.middleware import Middleware
 from tortoise.contrib.fastapi import register_tortoise
 from pydantic import ValidationError
+from cachetools import TTLCache
 
-from conf.vars import CLIENT_SECRET
 from conf.database import TORTOISE_CONFIG
 from conf.middlewares import AuthenticationMiddleware
 from conf.response import (
@@ -19,7 +20,6 @@ from conf.response import (
 )
 from utils.token import generate_access_token
 from routers import router as news_router
-from schemas import Client
 
 
 middleware = [
@@ -44,19 +44,7 @@ exceptions = {
 }
 
 
-@asynccontextmanager
-async def lifespan(_app: FastAPI):
-    # Create the log directory if it doesn't exist
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    log_dir = os.path.join(BASE_DIR, "logs")
-    os.makedirs(log_dir, exist_ok=True)
-
-    yield
-
-    pass
-
-
-app = FastAPI(middleware=middleware, lifespan=lifespan, exception_handlers=exceptions)
+app = FastAPI(middleware=middleware, exception_handlers=exceptions)
 app.include_router(news_router)
 
 
@@ -92,10 +80,35 @@ register_tortoise(
     add_exception_handlers=True,
 )
 
+cache = TTLCache(maxsize=5, ttl=300)
+DEFAULT_CLIENT_HASH = "6f7517d93cdaaecaa64f3052d135539e"
 
-@app.post("/token")
-async def get_token(_request: Request, payload: Client):
+
+@app.get("/code")
+async def get_code(_request: Request, client_id: str):
+    """Endpoint to get a code."""
+    length = random.randint(8, 10)
+    code = ''.join(
+        random.choice(string.ascii_uppercase + string.digits)
+        for _ in range(length)
+    )
+    cache[client_id] = code
+    return CustomJSONResponse(content={"code": code})
+
+
+@app.get("/token")
+async def get_token(_request: Request, client_id: str, client_secret: str, code: str):
     """Endpoint to get a token."""
-    if payload.client_secret != CLIENT_SECRET:
+    client = f"client_id:{client_id}-client_secret:{client_secret}"
+    md5_hash = hashlib.md5()
+    md5_hash.update(client.encode('utf-8'))
+    client_hash = md5_hash.hexdigest()
+    if client_hash != DEFAULT_CLIENT_HASH:
         raise HTTPException(status_code=400, detail="Client Not Found")
-    return CustomJSONResponse(content={"token": generate_access_token()})
+    cached_code = cache.get(client_id)
+    if not cached_code:
+        raise HTTPException(status_code=400, detail="Code Expired")
+    if code != cached_code:
+        raise HTTPException(status_code=400, detail="Invalid Code")
+    access_token = generate_access_token()
+    return CustomJSONResponse(content={"token": access_token})

@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 
-async def custom_request_validation_exception_handler(request, exc):
+async def custom_request_validation_exception_handler(_request, exc):
     """Custom handler for request validation exceptions."""
     error_message = "Validation Error!"
     error_detail = exc.errors()
@@ -23,7 +23,7 @@ async def custom_request_validation_exception_handler(request, exc):
     return JSONResponse(content=jsonable_encoder(response_data), status_code=400)
 
 
-async def custom_validation_error_handler(request, exc):
+async def custom_validation_error_handler(_request, exc):
     """Custom handler for validation errors."""
     error_message = "Validation Error!"
     error_detail = {"source": exc.title, "description": json.loads(exc.json())}
@@ -31,7 +31,7 @@ async def custom_validation_error_handler(request, exc):
     return CustomJSONResponse(content=jsonable_encoder(response_data), status_code=400)
 
 
-async def custom_http_exception_handler(request, exc):
+async def custom_http_exception_handler(_request, exc):
     """Custom handler for HTTP exceptions."""
     response_data = {"success": False, "message": exc.detail, "data": None}
     return JSONResponse(

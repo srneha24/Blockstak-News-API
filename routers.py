@@ -1,15 +1,22 @@
-from fastapi import APIRouter, Request, Path, Query
+from fastapi import APIRouter, Request, Path, Query, Depends
+from fastapi.security import OAuth2AuthorizationCodeBearer
 
 from views import (
     get_news_view,
     save_latest_news_view,
     get_headlines_by_country_view,
     get_headlines_by_source_view,
-    get_headlines_by_filter_view
+    get_headlines_by_filter_view,
 )
 
 
-router = APIRouter(prefix="/news", responses={404: {"description": "Not found"}})
+oauth2_scheme = OAuth2AuthorizationCodeBearer(authorizationUrl="code", tokenUrl="token")
+router = APIRouter(
+    prefix="/news",
+    tags=["news"],
+    responses={404: {"description": "Not found"}},
+    dependencies=[Depends(oauth2_scheme)],
+)
 
 
 @router.get("")

@@ -28,6 +28,7 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         authorization = request.headers.get('authorization')
+        request.state.is_authenticated = False
         if authorization:
             token = authorization.split(" ")[-1]
             try:
@@ -35,11 +36,10 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 client_id = payload.get('sub')
                 if not client_id or client_id != CLIENT_ID:
                     raise HTTPException(status_code=401, detail="Invalid Token", headers={"WWW-Authenticate": "Bearer"})
+                request.state.is_authenticated = True
             except InvalidTokenError as error:
                 Log.warning(data={'headers': request.state.headers, 'error': f'{error}'},
                             message=f'Invalid Token | {request.url.path} ')
-        elif not authorization and request.url.path != '/token':
-            raise HTTPException(status_code=401, detail="Failed To Authenticate", headers={"WWW-Authenticate": "Bearer"})
 
         response = await call_next(request)
         return response
