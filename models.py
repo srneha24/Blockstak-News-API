@@ -3,7 +3,7 @@ from tortoise.models import Model
 
 
 class Article(Model):
-    id = fields.BigIntField(pk=True, auto=True)
+    id = fields.BigIntField(primary_key=True, auto=True)
     title = fields.CharField(max_length=255, null=False)
     author = fields.CharField(max_length=255, null=True)
     description = fields.TextField(null=True)

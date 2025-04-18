@@ -1,6 +1,26 @@
 # BLOCKSTAK NEWS API
 
+## Table of Contents
+
+- [Project description](#project-description)
+    - [Codebase improvements](#codebase-improvements)
+- [Setup instructions](#setup-instructions)
+    - [FastAPI Setup](#fastapi-setup)
+    - [Database Setup](#database-setup)
+- [How to run the server](#how-to-run-the-server)
+- [How to run tests](#how-to-run-tests)
+- [How to use Docker](#how-to-use-docker)
+- [How to generate access tokens and use secured endpoints](#how-to-generate-access-tokens-and-use-secured-endpoints)
+- [API usage examples and descriptions for all 5 endpoints above](#api-usage-examples-and-descriptions-for-all-5-endpoints-above)
+    - [/news](#news)
+    - [/news/save-latest](#newssave-latest)
+    - [/news/headlines/country/{country_code}](#newsheadlinescountrycountry_code)
+    - [/news/headlines/source/{source_id}](#newsheadlinessourcesource_id)
+    - [/news/headlines/filter](#newsheadlinesfilter)
+
 ## Project description
+
+### Codebase improvements
 
 ## Setup instructions
 
@@ -75,10 +95,72 @@ fastapi run --host 0.0.0.0 main.py
 ```
 
 ## How to run tests
+To run the tests, run the following command
+
+```bash
+pytest -v
+```
 
 ## How to use Docker
 
 ## How to generate access tokens and use secured endpoints
+
+The project uses code based OAuth2 authorisation. For that, a client ID and client secret are required. For the purposes of this project, the client ID and client secret have been fixed to the following -
+
+```
+CLIENT_ID=demo-client
+CLIENT_SECRET=C51D80D50A15DF7D
+```
+
+Use the following steps to acquire a token to access the secured endpoints
+
+1. Make a `GET` request to the `/code` endpoint with the _CLIENT_ID_ as a query parameter. In the response, there will be a temporary code sent. Copy the code and proceed to the next step.
+
+    An example request and response of the endpoint is given below -
+
+    **_Request_**
+    ```bash
+    curl --location --request GET 'http://localhost:8000/code?client_id=demo-client' \
+    --header 'User-Agent: Apidog/1.0.0 (https://apidog.com)' \
+    --header 'Accept: */*' \
+    --header 'Host: localhost:8000' \
+    --header 'Connection: keep-alive'
+    ```
+
+    **_Response_**
+    ```json
+    {
+        "success": true,
+        "message": "Request Success",
+        "data": {
+            "code": "QR1kPwY9L"
+        }
+    }
+    ```
+
+2. Make a `GET` request to the `/token` endpoint with the _CLIENT_ID_, _CLIENT_SECRET_ and the _code_ acquired in the previous step as a query parameters. In the response, the token will be sent. Copy the token and use it as a _Bearer_ authorisation header when making the requests on the `/news` endpoints.
+
+    An example request and response of the endpoint is given below -
+
+    **_Request_**
+    ```bash
+    curl --location --request GET 'http://localhost:8000/token?client_id=demo-client&client_secret=C51D80D50A15DF7D&code=QR1kPwY9L' \
+    --header 'User-Agent: Apidog/1.0.0 (https://apidog.com)' \
+    --header 'Accept: */*' \
+    --header 'Host: localhost:8000' \
+    --header 'Connection: keep-alive'
+    ```
+
+    **_Response_**
+    ```json
+    {
+        "success": true,
+        "message": "Request Success",
+        "data": {
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZW1vLWNsaWVudCIsImV4cCI6MTc0NDk4NTc3OC41MzE2M30.V-_Bkux53_6owIYxLUBTI5Spz8ev4a-Yb0RcdoyiQ0k"
+        }
+    }
+    ```
 
 ## API usage examples and descriptions for all 5 endpoints above
 
@@ -206,7 +288,7 @@ All the APIs with example requests and responses, as well as full API documentat
 
     **_Request_**
     ```bash
-        curl --location --request GET 'http://localhost:8000/news/headlines/country/us' \
+    curl --location --request GET 'http://localhost:8000/news/headlines/country/us' \
     --header 'User-Agent: Apidog/1.0.0 (https://apidog.com)' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZW1vLWNsaWVudCIsImV4cCI6MTc0NDk5NDUzOC45NTQyODJ9.jn9qGVFm9NqPOvivNKW91Ks8OCdjWjZOxULCkchkBtM' \
     --header 'Accept: */*' \

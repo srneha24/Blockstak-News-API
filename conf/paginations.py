@@ -32,21 +32,6 @@ class Pagination:
             return int(self._page) - 1
         return None
 
-    def generate_pagination(self) -> Dict:
-        """
-        Generating the pagination data
-        return dictionary object
-        results (data) will be updated from the view
-        """
-        data = dict(
-            totalCount=self._count,
-            page=self._page,
-            limit=self._page_size,
-            nextPage=self._next,
-            prevPage=self._previous,
-        )
-        return data
-
     def get_paginated_data(self) -> Dict:
         """
         Generating the pagination data

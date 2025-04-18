@@ -2,3 +2,14 @@
 tortoise_orm = "conf.database.TORTOISE_CONFIG"
 location = "./migrations"
 src_folder = "./."
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v -ra -q"
+asyncio_mode = "strict"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::RuntimeWarning"
+]
