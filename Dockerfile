@@ -22,7 +22,11 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Final image
 FROM base AS final
 
 COPY . /app
+
+RUN echo '#!/bin/bash\naerich upgrade\nfastapi run --host 0.0.0.0 main.py' > /app/start.sh && \
+    chmod +x /app/start.sh
+
+CMD ["/app/start.sh"]

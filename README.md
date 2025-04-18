@@ -11,7 +11,7 @@
 - [How to run tests](#how-to-run-tests)
 - [How to use Docker](#how-to-use-docker)
 - [How to generate access tokens and use secured endpoints](#how-to-generate-access-tokens-and-use-secured-endpoints)
-- [API usage examples and descriptions for all 5 endpoints above](#api-usage-examples-and-descriptions-for-all-5-endpoints-above)
+- [API usage examples and descriptions for all 5 endpoints](#api-usage-examples-and-descriptions-for-all-5-endpoints)
     - [/news](#news)
     - [/news/save-latest](#newssave-latest)
     - [/news/headlines/country/{country_code}](#newsheadlinescountrycountry_code)
@@ -103,6 +103,22 @@ pytest -v
 
 ## How to use Docker
 
+Follow the steps below to run the project using _Docker_. Ensure that you are at the project root when you are performing the steps.
+
+1. Create a `.env` file on the project root, then copy the contents from the `.env.example` file and paste them to this file. Fill the variables with the values for your system.
+
+2. Build the docker image using the following command
+
+    ```bash
+    docker build -t blockstak-news-api .
+    ```
+
+3. Create the docker container and run the fastapi server using the following command
+
+    ```bash
+    docker run --name blockstak-news-api -p 8000:8000 --env-file ./.env --env DB_HOST=host.docker.internal blockstak-news-api
+    ```
+
 ## How to generate access tokens and use secured endpoints
 
 The project uses code based OAuth2 authorisation. For that, a client ID and client secret are required. For the purposes of this project, the client ID and client secret have been fixed to the following -
@@ -162,7 +178,7 @@ Use the following steps to acquire a token to access the secured endpoints
     }
     ```
 
-## API usage examples and descriptions for all 5 endpoints above
+## API usage examples and descriptions for all 5 endpoints
 
 All the APIs with example requests and responses, as well as full API documentation can be found in the following Apidog docs
 
